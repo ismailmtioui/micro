@@ -1,9 +1,11 @@
 package com.pokemon.api.api.security;
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,13 +15,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
+@Data
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private JwtAuthEntrypoint authEntrypoint;
-    private CustomUserDetailsService userDetailsService;
+    private final JwtAuthEntrypoint authEntrypoint;
+    private  CustomUserDetailsService userDetailsService;
 @Autowired
     public SecurityConfig(CustomUserDetailsService userDetailsService,JwtAuthEntrypoint authEntrypoint) {
         this.userDetailsService = userDetailsService;
@@ -41,6 +44,7 @@ public class SecurityConfig {
                    .anyRequest().authenticated()
                 .and()
                 .httpBasic();
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
 
     }
@@ -53,4 +57,8 @@ public class SecurityConfig {
 PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
 }
+    @Bean
+    public JWTAuthenticationFilter jwtAuthenticationFilter(){
+        return new JWTAuthenticationFilter();
+    }
 }

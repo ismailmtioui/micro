@@ -18,19 +18,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 @Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
-
+    @Autowired
     private JWTGenerator tokenGenerator;
+    @Autowired
     private CustomUserDetailsService customUserDetailsService;
-   @Autowired
-    public JWTAuthenticationFilter(JWTGenerator tokenGenerator, CustomUserDetailsService customUserDetailsService) {
-        this.tokenGenerator = tokenGenerator;
-        this.customUserDetailsService = customUserDetailsService;
-    }
+
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 String token = getJWTFromRequest(request);
-if (StringUtils.hasText(token)) && tokenGenerator.validateJWT(token){
+if (StringUtils.hasText(token) && tokenGenerator.validateJWT(token)){
     String username =tokenGenerator.getUsernameFromJWT(token);
     UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -38,7 +36,11 @@ if (StringUtils.hasText(token)) && tokenGenerator.validateJWT(token){
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
 
+            
+
 }
+  filterChain.doFilter(request, response);
+
  }
     private String getJWTFromRequest(HttpServletRequest request) {
        String bearerToken = request.getHeader("Authorization");
