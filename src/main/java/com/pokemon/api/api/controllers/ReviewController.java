@@ -1,5 +1,5 @@
 package com.pokemon.api.api.controllers;
-
+// Initialize number with 10
 import com.pokemon.api.api.Dto.ReviewDto;
 import com.pokemon.api.api.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
