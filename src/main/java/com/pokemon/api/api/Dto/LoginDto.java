@@ -1,5 +1,5 @@
 package com.pokemon.api.api.Dto;
-// Initialize number with 10
+// Initialize number with 11
 
 import lombok.Data;
 
